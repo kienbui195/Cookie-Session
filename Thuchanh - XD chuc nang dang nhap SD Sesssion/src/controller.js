@@ -4,47 +4,36 @@ const qs = require('qs');
 class Controller  {
 
     doLoginPage(req,res) {
-        if (req.method === 'GET') {
-            fs.readFile('./views/login.html','utf-8',(err, data) => {
-                res.writeHead(200, {'Content-type' : 'text/html'});
-                res.write(data);
-                res.end();
-            })
-        } else {
-            let data = '';
-            req.on('data' ,chunk => {
-                data += chunk;
-            })
-            req.on('end', () => {
-                let newData = qs.parse(data);
-                let expires = Date.now() + 1000*60*60;
-                let tokenSession = "{\"user\":\""+newData.user+"\",\"password\":\""+newData.password+"\",\"expires\":"+expires+"}";
-                this.createTokenSession(tokenSession);
-                fs.readFile('./views/homePage.html','utf-8' , (err, datahtml) => {
-                    if (err) {
-                        console.log(err)
-                    }
-                    datahtml = datahtml.replace('{user}', newData.user);
-                    datahtml = datahtml.replace('{password}', newData.password);
-                    res.writeHead(200, {'Content-type' : 'text/html'});
-                    res.write(datahtml);
-                    res.end();
-
-                })
-
-
-            })
-        }
-
+        fs.readFile('./views/login.html', 'utf-8', (err, data) => {
+            res.writeHead(200, {'Content-type': 'text/html'});
+            res.write(data);
+            res.end();
+        });
     }
 
     showHomePage(req, res) {
-        fs.readFile('./views/homePage.html','utf-8',(err, data) => {
-            res.writeHead(200, {'Content-type' : 'text/html'});
-            res.write(data);
-            res.end();
+        let data = '';
+        req.on('data' ,chunk => {
+            data += chunk;
         })
-    }
+        req.on('end', () => {
+            let newData = qs.parse(data);
+            let expires = Date.now() + 1000*60*60;
+            let tokenSession = "{\"user\":\""+newData.user+"\",\"password\":\""+newData.password+"\",\"expires\":"+expires+"}";
+            this.createTokenSession(tokenSession);
+            fs.readFile('./views/homePage.html','utf-8' , (err, datahtml) => {
+                if (err) {
+                    console.log(err)
+                }
+                datahtml = datahtml.replace('{user}', newData.user);
+                datahtml = datahtml.replace('{password}', newData.password);
+                res.writeHead(200, {'Content-type' : 'text/html'});
+                res.write(datahtml);
+                res.end();
+                })
+            })
+        }
+
 
     createRandomString(strLength) {
         let temp = strLength;

@@ -1,17 +1,18 @@
 const http = require("http");
-const Controller = require("./src/controller");
+const AppController = require("./src/appController");
 const port = 8080;
 
-let app = new Controller();
+let app = new AppController();
 
 const server = http.createServer((req, res) => {
     let path = req.url;
+    app.readSession(req, res);
     switch (path) {
         case '/':
-            app.doLoginPage(req,res);
+            app.doLogin(req,res);
             break;
         case '/home':
-            app.showHomePage(req, res);
+            app.showHome(req, res);
             break;
         default:
             res.end();
